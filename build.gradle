@@ -13,6 +13,7 @@ buildscript {
 plugins {
   id "java"
   id "idea"
+  id "jetty"
 }
 
 configurations {
@@ -23,6 +24,7 @@ sourceCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
 
 final SERVER_PORT = properties['server.port'] ?: '3000'
+project.httpPort = Integer.parseInt(SERVER_PORT)
 
 repositories {
   mavenCentral()
@@ -87,6 +89,7 @@ task generateQuerydslJava << {
     def exporter = new com.mysema.query.sql.codegen.MetaDataExporter()
     exporter.setPackageName("com.example.beer")
     exporter.setTargetFolder(new File("src/generated-sources/java"))
+    exporter.setBeanSerializer(new com.mysema.query.codegen.BeanSerializer())
     exporter.export(conn.getMetaData())
   } finally {
     conn.close()

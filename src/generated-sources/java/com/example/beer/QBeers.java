@@ -15,12 +15,12 @@ import java.sql.Types;
 
 
 /**
- * QBeers is a Querydsl query type for QBeers
+ * QBeers is a Querydsl query type for Beers
  */
 @Generated("com.mysema.query.sql.codegen.MetaDataSerializer")
-public class QBeers extends com.mysema.query.sql.RelationalPathBase<QBeers> {
+public class QBeers extends com.mysema.query.sql.RelationalPathBase<Beers> {
 
-    private static final long serialVersionUID = 735296895;
+    private static final long serialVersionUID = 1119288182;
 
     public static final QBeers beers = new QBeers("beers");
 
@@ -50,25 +50,25 @@ public class QBeers extends com.mysema.query.sql.RelationalPathBase<QBeers> {
 
     public final NumberPath<Integer> upc = createNumber("upc", Integer.class);
 
-    public final com.mysema.query.sql.PrimaryKey<QBeers> beersPK = createPrimaryKey(id);
+    public final com.mysema.query.sql.PrimaryKey<Beers> beersPK = createPrimaryKey(id);
 
     public QBeers(String variable) {
-        super(QBeers.class, forVariable(variable), "null", "beers");
+        super(Beers.class, forVariable(variable), "null", "beers");
         addMetadata();
     }
 
     public QBeers(String variable, String schema, String table) {
-        super(QBeers.class, forVariable(variable), schema, table);
+        super(Beers.class, forVariable(variable), schema, table);
         addMetadata();
     }
 
-    public QBeers(Path<? extends QBeers> path) {
+    public QBeers(Path<? extends Beers> path) {
         super(path.getType(), path.getMetadata(), "null", "beers");
         addMetadata();
     }
 
     public QBeers(PathMetadata<?> metadata) {
-        super(QBeers.class, metadata, "null", "beers");
+        super(Beers.class, metadata, "null", "beers");
         addMetadata();
     }
 
