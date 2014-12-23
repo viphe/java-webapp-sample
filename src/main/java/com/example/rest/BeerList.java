@@ -10,8 +10,8 @@ public class BeerList {
     }
 
     public BeerList(List<Beers> beers) {
-       // this.beers = beers;
+        this.beers = beers;
     }
 
-    //public List<Beers> beers;
+    public List<Beers> beers;
 }

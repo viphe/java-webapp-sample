@@ -8,7 +8,6 @@ import com.mysema.query.sql.SQLiteTemplates;
 import javax.ws.rs.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 @Path("/beers")
 @Consumes(Constants.UTF_8_JSON)
@@ -20,18 +19,19 @@ public class BeersResource {
     }
 
     @GET
-    public List<Beers> getBeers() throws SQLException {
+    public BeerList getBeers(@QueryParam("q") String q) throws SQLException {
         QBeers beers = QBeers.beers;
         SQLTemplates dialect = new SQLiteTemplates();
         try (Connection conn = getConnection()) {
             SQLQuery query = new SQLQuery(conn, dialect);
-            return query.from(beers).limit(10).list(beers);
+            return new BeerList(
+                query.from(beers).where(q == null ? null : beers.name.like("%" + q + "%")).limit(10).list(beers));
         }
     }
 
     @GET
     @Path("/{name}")
-    public Beers getBeers(@PathParam("name") String name) throws SQLException {
+    public Beers getBeer(@PathParam("name") String name) throws SQLException {
         QBeers beers = QBeers.beers;
         SQLTemplates dialect = new SQLiteTemplates();
         try (Connection conn = getConnection()) {
