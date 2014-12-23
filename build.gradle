@@ -1,0 +1,116 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    // Does not seem to work correctly
+    //classpath 'com.augusttechgroup:gradle-liquibase-plugin:0.7'
+    classpath 'org.xerial:sqlite-jdbc:3.8.7'
+    classpath 'com.mysema.querydsl:querydsl-sql-codegen:3.6.0'
+  }
+}
+
+plugins {
+  id "java"
+  id "idea"
+}
+
+configurations {
+  javaAgent // used for the runtime New Relic agent
+}
+
+sourceCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
+
+final SERVER_PORT = properties['server.port'] ?: '3000'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+
+  compile 'com.google.guava:guava:18.0'
+
+  // Logging
+  def SLF4J_VERSION = '1.7.9'
+  compile 'org.slf4j:slf4j-api:' + SLF4J_VERSION
+  compile 'org.slf4j:jul-to-slf4j:' + SLF4J_VERSION
+  compile 'ch.qos.logback:logback-classic:1.0.13'
+
+  // Injection and Guice
+//  compile 'com.google.inject:guice:3.0'
+//  compile 'com.google.inject.extensions:guice-servlet:3.0'
+//  compile 'com.mycila.com.google.inject.extensions:guice-assisted-inject:3.0-20100907'
+//  compile 'com.mycila.com.google.inject.extensions:guice-throwing-providers:3.0-20100927'
+
+  // JDBC and jOOQ
+  compile 'org.xerial:sqlite-jdbc:3.8.7'
+  compile 'com.mysema.querydsl:querydsl-sql:3.6.0'
+  compile 'com.zaxxer:HikariCP:2.2.5'
+
+  // JETTY
+  final JETTY_VERSION = '9.3.0.M1'
+  compile 'org.eclipse.jetty:jetty-server:' + JETTY_VERSION
+  compile 'org.eclipse.jetty:jetty-webapp:' + JETTY_VERSION
+  compile 'org.eclipse.jetty:jetty-jndi:' + JETTY_VERSION
+
+  // JERSEY
+  final JERSEY_VERSION = '1.18.3'
+  compile 'com.sun.jersey:jersey-core:' + JERSEY_VERSION
+  compile 'com.sun.jersey:jersey-servlet:' + JERSEY_VERSION
+  compile 'com.sun.jersey:jersey-server:' + JERSEY_VERSION
+  compile 'com.sun.jersey:jersey-json:' + JERSEY_VERSION
+  compile 'com.sun.jersey.contribs:jersey-multipart:' + JERSEY_VERSION
+  compile 'com.sun.jersey:jersey-client:' + JERSEY_VERSION
+ // compile 'com.sun.jersey.contribs:jersey-guice:' + JERSEY_VERSION
+  // As we are buidling an executable Jetty app,
+  // we need to force the inclusion of dependencies usually provided at runtime with Jersey.
+  compile 'javax.ws.rs:jsr311-api:1.1.1'
+
+  // TESTS
+  testCompile 'junit:junit:4.11'
+  testCompile 'org.hamcrest:hamcrest-library:1.3'
+}
+
+sourceSets {
+  main {
+    java {
+      srcDir 'src/generated-sources/java'
+    }
+  }
+}
+
+task generateQuerydslJava << {
+  def conn = new org.sqlite.JDBC().connect("jdbc:sqlite:${project.rootDir}/db/beers.db", new java.util.Properties())
+  try {
+    def exporter = new com.mysema.query.sql.codegen.MetaDataExporter()
+    exporter.setPackageName("com.example.beer")
+    exporter.setTargetFolder(new File("src/generated-sources/java"))
+    exporter.export(conn.getMetaData())
+  } finally {
+    conn.close()
+  }
+}
+
+task appRun(type: JavaExec, dependsOn:[classes]) {
+  description = 'runs the iOS Device Client Service'
+  main = 'com.partnerpedia.iosdcs.Main'
+  classpath = sourceSets.main.runtimeClasspath
+  systemProperties = [
+    'server.port': SERVER_PORT,
+    'file.encoding': 'UTF-8',
+    'newrelic.environment': 'development']
+  maxHeapSize = '1024m'
+  jvmArgs '-Xms256m', '-Xmn172m', '-XX:MaxPermSize=128m', "-javaagent:${configurations.javaAgent.files.join(File.pathSeparator)}"
+}
+
+idea {
+  project {
+    languageLevel = sourceCompatibility
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.2.1'
+}
