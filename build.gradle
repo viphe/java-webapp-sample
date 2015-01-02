@@ -58,17 +58,18 @@ dependencies {
   compile 'org.eclipse.jetty:jetty-jndi:' + JETTY_VERSION
 
   // JERSEY
-  final JERSEY_VERSION = '1.18.3'
-  compile 'com.sun.jersey:jersey-core:' + JERSEY_VERSION
-  compile 'com.sun.jersey:jersey-servlet:' + JERSEY_VERSION
-  compile 'com.sun.jersey:jersey-server:' + JERSEY_VERSION
-  compile 'com.sun.jersey:jersey-json:' + JERSEY_VERSION
-  compile 'com.sun.jersey.contribs:jersey-multipart:' + JERSEY_VERSION
-  compile 'com.sun.jersey:jersey-client:' + JERSEY_VERSION
- // compile 'com.sun.jersey.contribs:jersey-guice:' + JERSEY_VERSION
+  final JERSEY_VERSION = '2.14'
+  compile 'org.glassfish.jersey.core:jersey-server:' + JERSEY_VERSION
+  compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + JERSEY_VERSION
+  compile 'org.glassfish.jersey.containers:jersey-container-servlet:' + JERSEY_VERSION
+  compile 'org.glassfish.jersey.containers:jersey-container-grizzly2-http:' + JERSEY_VERSION
+
+  // compile 'com.sun.jersey.contribs:jersey-guice:' + JERSEY_VERSION
   // As we are buidling an executable Jetty app,
   // we need to force the inclusion of dependencies usually provided at runtime with Jersey.
-  compile 'javax.ws.rs:jsr311-api:1.1.1'
+  compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+
+  compile 'io.reactivex:rxjava:1.0.4'
 
   // TESTS
   testCompile 'junit:junit:4.11'
@@ -98,14 +99,13 @@ task generateQuerydslJava << {
 
 task appRun(type: JavaExec, dependsOn:[classes]) {
   description = 'runs the iOS Device Client Service'
-  main = 'com.partnerpedia.iosdcs.Main'
+  main = 'com.example.Main'
   classpath = sourceSets.main.runtimeClasspath
   systemProperties = [
     'server.port': SERVER_PORT,
     'file.encoding': 'UTF-8',
     'newrelic.environment': 'development']
   maxHeapSize = '1024m'
-  jvmArgs '-Xms256m', '-Xmn172m', '-XX:MaxPermSize=128m', "-javaagent:${configurations.javaAgent.files.join(File.pathSeparator)}"
 }
 
 idea {

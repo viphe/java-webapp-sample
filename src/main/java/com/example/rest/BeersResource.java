@@ -1,11 +1,16 @@
 package com.example.rest;
 import com.example.beer.Beers;
 import com.example.beer.QBeers;
+import com.mysema.query.SearchResults;
 import com.mysema.query.sql.SQLQuery;
 import com.mysema.query.sql.SQLTemplates;
 import com.mysema.query.sql.SQLiteTemplates;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import javax.ws.rs.*;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -39,5 +44,4 @@ public class BeersResource {
             return query.from(beers).where(beers.name.eq(name)).list(beers).get(0);
         }
     }
-
 }

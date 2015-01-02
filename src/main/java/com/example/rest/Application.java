@@ -11,9 +11,9 @@ public class Application extends javax.ws.rs.core.Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> classes = new HashSet<Class<?>>();
-// register root resource
         classes.add(JacksonConfigurator.class);
         classes.add(BeersResource.class);
+        classes.add(ExportResource.class);
         return classes;
     }
 }

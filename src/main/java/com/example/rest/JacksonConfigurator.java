@@ -1,8 +1,6 @@
 package com.example.rest;
 
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.*;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -20,9 +18,9 @@ public class JacksonConfigurator implements ContextResolver<ObjectMapper> {
 
 
   public JacksonConfigurator() {
-    mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-    mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
+    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     mapper.setDateFormat(Constants.getJsonDateFormat());
   }
 
