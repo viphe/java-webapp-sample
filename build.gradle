@@ -98,13 +98,13 @@ task generateQuerydslJava << {
 }
 
 task appRun(type: JavaExec, dependsOn:[classes]) {
-  description = 'runs the iOS Device Client Service'
+  description = 'runs the webapp'
   main = 'com.example.Main'
   classpath = sourceSets.main.runtimeClasspath
   systemProperties = [
     'server.port': SERVER_PORT,
-    'file.encoding': 'UTF-8',
-    'newrelic.environment': 'development']
+    'file.encoding': 'UTF-8'
+  ]
   maxHeapSize = '1024m'
 }
 
